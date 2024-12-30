@@ -10,6 +10,10 @@
 
 struct termios orig_termios;
 
+void editorRefreshScreen(){
+  write(STDOUT_FILENO, "\x1b[2J", 4);
+}
+
 void die(const char *s){
   perror(s);
   exit(1);
@@ -59,6 +63,7 @@ int main(){
   enableRaw();
   
   while(1){
+    editorRefreshScreen();
     editorProcessKey();
   }
   return 0;
