@@ -1,3 +1,4 @@
+#include <errno.h>
 #include <stdio.h>
 #include <ctype.h>
 #include <stdlib.h>
@@ -35,19 +36,30 @@ void enableRaw(){
   if (tcsetattr(STDIN_FILENO, TCSAFLUSH, &raw) == -1) die("tcsetattr");
 }
 
+char editorReadKey(){
+  int nread;
+  char c;
+  while ((nread = read(STDIN_FILENO, &c, 1)) != 1){
+    if (nread == -1 && errno != EAGAIN) die("read");
+  }
+  return c;
+}
+
+void editorProcessKey(){
+  char c = editorReadKey();
+
+  switch(c){
+    case CTRL_KEY('q'):
+        exit(0);
+        break;
+  }
+}
+
 int main(){
   enableRaw();
   
   while(1){
-    char c = '\0';
-    if (read(STDIN_FILENO, &c, 1) == -1 && errno != EAGAIN) die("read");
-    if (iscntrl(c)){
-      printf("%d\n", c);
-    }
-    else{
-      printf("%d ('%c')\r\n", c, c);
-    }
-    if (c == CTRL_KEY('q')) break;
+    editorProcessKey();
   }
   return 0;
 }
