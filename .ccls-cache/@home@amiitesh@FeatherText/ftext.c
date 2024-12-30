@@ -33,7 +33,7 @@ int main(){
       printf("%d\n", c);
     }
     else{
-      printf("%d ('%c')\n", c, c);
+      printf("%d ('%c')\r\n", c, c);
     }
   }
   return 0;
