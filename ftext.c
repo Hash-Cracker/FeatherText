@@ -8,11 +8,21 @@
 
 #define CTRL_KEY(k) ((k) & 0x1f)
 
-struct termios orig_termios;
+struct editorConfig{
+  int srows;
+  int scols;
+  struct termios orig_termios;
+};
+
+struct editorConfig E;
+
+void initEditor(){
+  if (getWindowSize(&E.srows, &E.scols) == -1) die("getWindowSize");
+}
 
 void editorDrawRows(){
   int y;
-  for (y = 0; y < 50; y++){
+  for (y = 0; y < E.srows; y++){
     write(STDOUT_FILENO, "~\r\n", 3);
   }
 }
@@ -34,15 +44,15 @@ void die(const char *s){
 }
 
 void disableRaw(){
-  if (tcsetattr(STDIN_FILENO, TCSAFLUSH, &orig_termios) == -1) die("tcsetattr");
+  if (tcsetattr(STDIN_FILENO, TCSAFLUSH, &E.orig_termios) == -1) die("tcsetattr");
 }
 
 void enableRaw(){
-  if (tcgetattr(STDIN_FILENO, &orig_termios) == -1) die("tcgetattr");
+  if (tcgetattr(STDIN_FILENO, &E.orig_termios) == -1) die("tcgetattr");
   atexit(disableRaw);
 
 
-  struct termios raw = orig_termios;
+  struct termios raw = E.orig_termios;
 
   raw.c_lflag &= ~(ECHO | ICANON | IEXTEN | ISIG);
   raw.c_iflag &= ~(ICRNL | IXON | BRKINT | ISTRIP);
@@ -77,6 +87,7 @@ void editorProcessKey(){
 
 int main(){
   enableRaw();
+  initEditor();
   
   while(1){
     editorRefreshScreen();
