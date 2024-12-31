@@ -1,5 +1,6 @@
 #include <errno.h>
 #include <stdio.h>
+#include <sys/ioctl.h>
 #include <ctype.h>
 #include <stdlib.h>
 #include <termios.h>
@@ -18,6 +19,10 @@ struct editorConfig E;
 
 void initEditor(){
   if (getWindowSize(&E.srows, &E.scols) == -1) die("getWindowSize");
+}
+
+void getWindowSize(){
+  
 }
 
 void editorDrawRows(){
