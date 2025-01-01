@@ -17,10 +17,6 @@ struct editorConfig{
 
 struct editorConfig E;
 
-void initEditor(){
-  if (getWindowSize(&E.srows, &E.scols) == -1) die("getWindowSize");
-}
-
 int getWindowSize(int *rows, int *cols){
   struct winsize ws;
 
@@ -99,6 +95,10 @@ void editorProcessKey(){
         exit(0);
         break;
   }
+}
+
+void initEditor(){
+  if (getWindowSize(&E.srows, &E.scols) == -1) die("getWindowSize");
 }
 
 int main(){
